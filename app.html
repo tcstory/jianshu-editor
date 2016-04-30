@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-CN">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title></title>
+    <link rel="stylesheet" href="wangeditor/dist/css/wangEditor.css">
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="app.css">
+    <script src="node_modules/vue/dist/vue.js"></script>
+    <script src="scrollbar.js"></script>
+</head>
+<body>
+<section id="tc-writer" v-el:writer>
+    <ul class="directory" v-el:notes-wrapper>
+        <div class="write-note" v-el:write-note-btn>
+            <i class="fa fa-pencil pencil-icon" aria-hidden="true"></i>
+            <span class="write-note-text">+新建文章</span>
+        </div>
+        <li class="note" v-for="note in notes"
+            v-bind:class="{current: curSelectedNote === note, drag: curDraggedNote === note}"
+            v-on:mousedown="handleNoteMousedown(note, $event)">
+            <i class="fa fa-file-o file-icon"></i>
+            <p class="note-title" v-text="note.title"></p>
+        </li>
+    </ul>
+    <article class="main">
+        <div class="title-row"><input type="text" class="title-input"></div>
+        <div class="text-area" id="editor"></div>
+    </article>
+</section>
+<script src="app.js"></script>
+<script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="wangeditor/dist/js/wangEditor.min.js"></script>
+<script type="text/javascript">
+    var editor = new wangEditor('editor');
+    editor.config.menus = [
+        'bold',
+        'underline',
+        'italic',
+        'strikethrough',
+        'forecolor',
+        'bgcolor',
+        'quote',
+        'fontsize',
+        'img'
+
+    ];
+    editor.create();
+</script>
+</body>
+</html>

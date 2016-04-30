@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh-CN">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title></title>
+    <link rel="stylesheet" href="wangeditor/dist/css/wangEditor.min.css">
+</head>
+<body>
+<div id="div1">
+    <p>请输入内容...</p>
+</div>
+<script type="text/javascript" src="http://cdn.bootcss.com/jquery/2.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="wangeditor/dist/js/wangEditor.min.js"></script>
+<script type="text/javascript">
+    var editor = new wangEditor('div1');
+    editor.config.menus = [
+        'bold',
+        'underline',
+        'italic',
+        'strikethrough',
+        'forecolor',
+        'bgcolor',
+        'quote',
+        'fontsize',
+        'img'
+
+    ];
+    editor.create();
+</script>
+</body>
+</html>

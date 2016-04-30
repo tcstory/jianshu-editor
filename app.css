@@ -1,0 +1,106 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+html {
+    background-color: antiquewhite;
+}
+li {
+    list-style: none;
+}
+#tc-writer {
+    width: 800px;
+    height: 640px;
+    margin: 1rem auto;
+    display: flex;
+    background-color: white;
+}
+
+#tc-writer .directory {
+    width: 18.75rem;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid #d9d9d9;
+    position: relative;
+}
+#tc-writer .write-note {
+    width: 100%;
+    height: 2.5rem;
+    border-bottom: 1px solid #d9d9d9;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+#tc-writer .write-note .pencil-icon {
+    font-size: 1.25rem;
+    margin-left: 1rem;
+}
+#tc-writer .write-note .write-note-text {
+    margin-left: .25rem;
+}
+#tc-writer .directory .note {
+    width: 100%;
+    height: 5.5rem;
+    border-bottom: 1px solid #d9d9d9;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+#tc-writer .directory .note-holder {
+    width: 100%;
+    height: 5.5rem;
+    border-bottom: 1px solid #d9d9d9;
+    background-color: rgba(76, 175, 80, 0.71);
+    pointer-events: none;
+}
+#tc-writer .directory .note.current {
+    background-color: #d1c091;
+    color: white;
+}
+#tc-writer .directory .note.drag {
+    position: absolute;
+    /*opacity: .8;*/
+    border: .125rem solid #d1c091;
+    background-color: red;
+}
+#tc-writer .file-icon {
+    font-size: 2rem;
+    margin-left: 1rem;
+}
+#tc-writer .note-title {
+    margin-left: 1rem;
+    font-size: 1.375rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 1rem;
+}
+#tc-writer .main {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+#tc-writer .main .title-row {
+    height: 4rem;
+    width: 100%;
+    padding-top: .5rem;
+    border-top: 1px solid #cccccc;
+    border-right: 1px solid #cccccc;
+}
+#tc-writer .main .title-input {
+    width: 100%;
+    height: 3.5rem;
+    outline: none;
+    border: none;
+    font-size: 1.875rem;
+    padding: 0 .5em;
+}
+#tc-writer .main .tool-row {
+    height: 2.5rem;
+    width: 100%;
+    background-color: #DEDEDE;
+}
+#tc-writer .text-area {
+    flex: 1 0 auto;
+}
