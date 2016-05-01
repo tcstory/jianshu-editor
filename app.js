@@ -41,6 +41,7 @@ var Data = {
     }
 };
 
+var noteDOMs = [];
 
 var vm = new Vue({
     el: '#tc-writer',
@@ -65,34 +66,73 @@ var vm = new Vue({
         handleNoteMousedown: function (note, ev) {
             this.isMousedown = true;
             this.curNote = note;
-            this.deltaY = ev.clientY - note.dom.getBoundingClientRect().top;
+            this.deltaY = ev.clientY - noteDOMs[note.pos].dom.getBoundingClientRect().top;
         },
         _clearDragInfo: function () {
             this.isDrag = false;
-            this.curDraggedNote.dom.style.top = '';
+            noteDOMs[this.curDraggedNote.pos].dom.style.top = '';
             this.curDraggedNote = {};
         },
         _autoScroll: function (clientY) {
             if (clientY < (this.tcWriter.top + this.tcWriter.midOfNote)) {
-                this.$els.notesWrapper.scrollTop -=20;
-            } else if (clientY > (this.tcWriter.bottom-this.tcWriter.midOfNote)) {
+                this.$els.notesWrapper.scrollTop -= 20;
+            } else if (clientY > (this.tcWriter.bottom - this.tcWriter.midOfNote)) {
                 this.$els.notesWrapper.scrollTop = this.$els.notesWrapper.scrollTop + 20;
             }
         },
         _calcNotePos: function () {
             var _myself = this;
-            var notes = _myself.notes;
             setTimeout(function () {
-                var noteDOMs = _myself.$els.writer.querySelectorAll('.note');
-                var mid = parseFloat(getComputedStyle(noteDOMs[0], null).height);
+                var doms = _myself.$els.writer.querySelectorAll('.note');
+                var mid = parseFloat(getComputedStyle(doms[0], null).height);
                 _myself.tcWriter.midOfNote = mid;
-                if (Array.isArray(notes)) {
-                    for (var i = 0; i < noteDOMs.length; i++) {
-                        notes[i].delimiter = noteDOMs[i].offsetTop + mid / 2;
-                        notes[i].dom = noteDOMs[i];
-                    }
+                noteDOMs = [];
+                for (var i = 0; i < doms.length; i++) {
+                    noteDOMs.push({
+                        delimiter: doms[i].offsetTop + mid / 2,
+                        dom: doms[i]
+                    });
+                    _myself.notes[i].pos = i;
                 }
             }, 0)
+        },
+        _handleMouseup: function () {
+            var _myself = this;
+            _myself.isMousedown = false;
+            if (_myself.isDrag) {
+                _myself.notes.$remove(_myself.curDraggedNote);
+                var elems = _myself.$els.notesWrapper.children;
+                var len = elems.length;
+                var pos = -1;
+                var d = 0;
+                for (var i = 1; i < len; i++) {
+                    if (elems[i].classList.contains('note-holder')) {
+                        pos = i - 1;
+                        break;
+                    } else if (elems[i].classList.contains('drag')) {
+                        d++;
+                    }
+                }
+                _myself.notes.splice(pos - d, 0, _myself.curDraggedNote);
+                _myself._calcNotePos();
+                _myself._clearDragInfo();
+                _myself.$els.notesWrapper.removeChild(noteHolderDIV);
+            } else {
+                _myself.curSelectedNote = _myself.curNote;
+            }
+        },
+        _handleMousemove: function (ev) {
+            var _myself = this;
+            if (_myself.isMousedown) {
+                _myself.isDrag = true;
+                _myself.curDraggedNote = _myself.curNote;
+                noteHolder.insert(noteDOMs[_myself.curDraggedNote.pos], noteDOMs);
+                _myself._autoScroll(ev.clientY);
+                var top = ev.clientY - _myself.tcWriter.top - _myself.deltaY + _myself.$els.notesWrapper.scrollTop;
+                if (top < _myself.tcWriter.scrollHeight && top >= 0) {
+                    noteDOMs[_myself.curDraggedNote.pos].dom.style.top = top + 'px';
+                }
+            }
         }
     },
     ready: function () {
@@ -100,37 +140,21 @@ var vm = new Vue({
         createScrollBar({
             target: document.querySelector('#tc-writer .directory')
         });
-        _myself.tcWriter.top = _myself.$els.writer.getBoundingClientRect().top;
-        _myself.tcWriter.bottom = _myself.$els.writer.getBoundingClientRect().bottom;
-        _myself.tcWriter.heightOfWriteNoteBtn = parseFloat(getComputedStyle(_myself.$els.writeNoteBtn,null).height);
         window.addEventListener('mousemove', function (ev) {
-            if (_myself.isMousedown) {
-                _myself.isDrag = true;
-                _myself.curDraggedNote = _myself.curNote;
-                noteHolder.insert(_myself.curDraggedNote, _myself.notes, _myself.$els.notesWrapper);
-                _myself._autoScroll(ev.clientY);
-                var top = ev.clientY - _myself.tcWriter.top  - _myself.deltaY + _myself.$els.notesWrapper.scrollTop;
-                if (top < _myself.tcWriter.scrollHeight && top >= 0) {
-                    _myself.curDraggedNote.dom.style.top = top + 'px';
-                }
-            }
+            _myself._handleMousemove(ev);
         });
-        window.addEventListener('mouseup', function (ev) {
-            if (_myself.isDrag) {
-                _myself.isDrag = false;
-                _myself._clearDragInfo();
-                _myself.$els.notesWrapper.removeChild(noteHolderDIV);
-            } else {
-                _myself.curSelectedNote = _myself.curNote;
-            }
-            _myself.isMousedown = false;
+        window.addEventListener('mouseup', function () {
+            _myself._handleMouseup();
         });
         Data.getNotes(function (notes) {
             _myself.notes = notes;
             _myself._calcNotePos();
             setTimeout(function () {
                 _myself.tcWriter.scrollHeight = _myself.$els.notesWrapper.scrollHeight;
-            },0)
+                _myself.tcWriter.top = _myself.$els.writer.getBoundingClientRect().top;
+                _myself.tcWriter.bottom = _myself.$els.writer.getBoundingClientRect().bottom;
+                _myself.tcWriter.heightOfWriteNoteBtn = parseFloat(getComputedStyle(_myself.$els.writeNoteBtn, null).height);
+            }, 0)
         })
     }
 });
@@ -141,26 +165,28 @@ noteHolderDIV.classList.add('note-holder');
 var noteHolder = {
     timeId: -1,
     interval: 150,
-    insert: function (draggedNote, notes, notesWrapper) {
+    pos: -1,
+    notesWrapper: document.querySelector('#tc-writer .directory'),
+    insert: function (draggedNote, notes) {
         var _myself = this;
         if (_myself.timeId === -1) {
-            _myself._addHolder(draggedNote, notes, notesWrapper);
+            _myself._addHolder(draggedNote, notes);
             _myself.timeId = setTimeout(function () {
                 _myself.timeId = -1;
-                _myself._addHolder(draggedNote, notes, notesWrapper);
+                _myself._addHolder(draggedNote, notes);
             }, _myself.interval);
         }
     },
-    _addHolder: function (draggedNote, notes, notesWrapper) {
+    _addHolder: function (draggedNote, notes) {
         var len = notes.length;
         for (var i = 0; i < len; i++) {
             if (draggedNote.dom.offsetTop < notes[i].delimiter) {
-                notesWrapper.insertBefore(noteHolderDIV, notes[i].dom);
+                this.notesWrapper.insertBefore(noteHolderDIV, notes[i].dom);
                 break;
             }
         }
         if (i === len) {
-            notesWrapper.appendChild(noteHolderDIV);
+            this.notesWrapper.appendChild(noteHolderDIV);
         }
     }
 };
