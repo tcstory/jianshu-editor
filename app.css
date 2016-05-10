@@ -46,6 +46,7 @@ li {
     display: flex;
     align-items: center;
     cursor: pointer;
+    position: relative;
 }
 #tc-writer .directory .note-holder {
     width: 100%;
@@ -60,13 +61,69 @@ li {
 }
 #tc-writer .directory .note.drag {
     position: absolute;
-    /*opacity: .8;*/
     border: .125rem solid #d1c091;
     background-color: red;
 }
 #tc-writer .file-icon {
     font-size: 2rem;
     margin-left: 1rem;
+}
+#tc-writer .setting-icon {
+    font-size: 1.25rem;
+    position: absolute;
+    right: .5rem;
+    top: .5rem;
+    cursor: pointer;
+    visibility: hidden;
+}
+#tc-writer .current .setting-icon {
+    visibility: visible;
+}
+#tc-writer .dropdown-menu {
+    width: 10rem;
+    position: absolute;
+    background-color: white;
+    color: #555;
+    right: 0;
+    top:2.5rem;
+    border: 0.0625rem solid #d9d9d9;
+    border-radius: .25rem;
+    padding: .25rem 0 0;
+}
+#tc-writer .dropdown-menu::before {
+    content: '';
+    display: inline-block;
+    border-left: .5625rem solid transparent;
+    border-right: .5625rem solid transparent;
+    border-bottom: .5625rem solid #d9d9d9;
+    position: absolute;
+    top: -.5625rem;
+    right: .5rem;
+}
+#tc-writer .dropdown-menu::after {
+    content: '';
+    display: inline-block;
+    border-left: .5625rem solid transparent;
+    border-right: .5625rem solid transparent;
+    border-bottom: .5625rem solid white;
+    position: absolute;
+    top: -.5rem;
+    right: .5rem;
+}
+#tc-writer .dropdown-menu .menu-item {
+    padding: .25rem .25rem .25rem 1rem;
+    border-radius: .25rem;
+}
+#tc-writer .dropdown-menu .menu-item:hover  {
+    background-color: #4f4f4f;
+    color: white;
+}
+#tc-writer .dropdown-menu .menu-item-text {
+    font-size: .8rem;
+}
+#tc-writer .dropdown-menu .trash-icon {
+    font-size: 1.25rem;
+    vertical-align: middle;
 }
 #tc-writer .note-title {
     margin-left: 1rem;

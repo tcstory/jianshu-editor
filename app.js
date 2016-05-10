@@ -10,31 +10,40 @@ var Data = {
         setTimeout(function () {
             cb([
                 {
-                    title: '无标题文章1'
+                    title: '无标题文章1',
+                    content: '我是文章1'
                 },
                 {
-                    title: '无标题文章2'
+                    title: '无标题文章2',
+                    content: '我是文章<span style="red">2</span>'
                 },
                 {
-                    title: '无标题文章3'
+                    title: '无标题文章3',
+                    content: '我是文章3'
                 },
                 {
-                    title: '无标题文章4'
+                    title: '无标题文章4',
+                    content: '我是文章4'
                 },
                 {
-                    title: '无标题文章5'
+                    title: '无标题文章5',
+                    content: '我是文章5'
                 },
                 {
-                    title: '无标题文章6'
+                    title: '无标题文章6',
+                    content: '我是文章6'
                 },
                 {
-                    title: '无标题文章7'
+                    title: '无标题文章7',
+                    content: '我是文章7'
                 },
                 {
-                    title: '无标题文章8'
+                    title: '无标题文章8',
+                    content: '我是文章8'
                 },
                 {
-                    title: '无标题文章9'
+                    title: '无标题文章9',
+                    content: '我是文章9'
                 }
             ])
         }, 1000)
@@ -42,7 +51,7 @@ var Data = {
 };
 
 var noteDOMs = [];
-
+var editor;
 var vm = new Vue({
     el: '#tc-writer',
     data: {
@@ -52,6 +61,7 @@ var vm = new Vue({
         curNote: {},
         curSelectedNote: {},
         curDraggedNote: {},
+        openDropdownMenu: false,
         deltaY: -1,
         tcWriter: {
             top: -1,
@@ -62,11 +72,35 @@ var vm = new Vue({
         }
 
     },
+    watch: {
+        'curSelectedNote.content': function (newVal) {
+            editor.$txt.html(newVal);
+        }
+    },
     methods: {
         handleNoteMousedown: function (note, ev) {
             this.isMousedown = true;
             this.curNote = note;
             this.deltaY = ev.clientY - noteDOMs[note.pos].dom.getBoundingClientRect().top;
+            this.openDropdownMenu = false;
+            console.log('is me')
+        },
+        handleWriteNewNote: function () {
+            var note = {
+                title: '',
+                content: ''
+            };
+            this.notes.unshift(note);
+            this._calcNotePos();
+            this.curNote = note;
+            this.curSelectedNote = note;
+        },
+        handleSettingIconClick: function () {
+            this.openDropdownMenu = !this.openDropdownMenu;
+        },
+        handleDeleteNote: function (note) {
+            this.notes.$remove(note);
+            this._calcNotePos();
         },
         _clearDragInfo: function () {
             this.isDrag = false;
@@ -94,6 +128,7 @@ var vm = new Vue({
                     });
                     _myself.notes[i].pos = i;
                 }
+                _myself.tcWriter.scrollHeight = _myself.$els.notesWrapper.scrollHeight;
             }, 0)
         },
         _handleMouseup: function () {
@@ -137,6 +172,24 @@ var vm = new Vue({
     },
     ready: function () {
         var _myself = this;
+
+        editor = new wangEditor('editor');
+        editor.config.menus = [
+            'bold',
+            'underline',
+            'italic',
+            'strikethrough',
+            'forecolor',
+            'bgcolor',
+            'quote',
+            'fontsize',
+            'img'
+
+        ];
+        editor.onchange = function () {
+            _myself.curSelectedNote.content = editor.$txt.html();
+        };
+        editor.create();
         createScrollBar({
             target: document.querySelector('#tc-writer .directory')
         });
@@ -148,6 +201,8 @@ var vm = new Vue({
         });
         Data.getNotes(function (notes) {
             _myself.notes = notes;
+            _myself.curNote = notes[0];
+            _myself.curSelectedNote = notes[0];
             _myself._calcNotePos();
             setTimeout(function () {
                 _myself.tcWriter.scrollHeight = _myself.$els.notesWrapper.scrollHeight;

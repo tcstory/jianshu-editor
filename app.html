@@ -13,7 +13,7 @@
 <body>
 <section id="tc-writer" v-el:writer>
     <ul class="directory" v-el:notes-wrapper>
-        <div class="write-note" v-el:write-note-btn>
+        <div class="write-note" v-el:write-note-btn v-on:click.stop="handleWriteNewNote">
             <i class="fa fa-pencil pencil-icon" aria-hidden="true"></i>
             <span class="write-note-text">+新建文章</span>
         </div>
@@ -21,32 +21,45 @@
             v-bind:class="{current: curSelectedNote === note, drag: curDraggedNote === note}"
             v-on:mousedown="handleNoteMousedown(note, $event)">
             <i class="fa fa-file-o file-icon"></i>
+            <i class="fa fa-cog setting-icon" aria-hidden="true"
+               v-on:mousedown.stop=""
+               v-on:click.stop="handleSettingIconClick"></i>
+            <div class="dropdown-menu" v-show="curSelectedNote === note && openDropdownMenu">
+                <div class="menu-item"
+                     v-on:mousedown.stop=""
+                     v-on:click.stop="handleDeleteNote(note)">
+                    <i class="fa fa-trash-o trash-icon" aria-hidden="true"></i>
+                    <span class="menu-item-text">删除文章</span>
+                </div>
+            </div>
             <p class="note-title" v-text="note.title"></p>
         </li>
     </ul>
     <article class="main">
-        <div class="title-row"><input type="text" class="title-input"></div>
+        <div class="title-row">
+            <input type="text" class="title-input" v-model="curSelectedNote.title">
+        </div>
         <div class="text-area" id="editor"></div>
     </article>
 </section>
-<script src="app.js"></script>
 <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="wangeditor/dist/js/wangEditor.min.js"></script>
+<script src="app.js"></script>
 <script type="text/javascript">
-    var editor = new wangEditor('editor');
-    editor.config.menus = [
-        'bold',
-        'underline',
-        'italic',
-        'strikethrough',
-        'forecolor',
-        'bgcolor',
-        'quote',
-        'fontsize',
-        'img'
-
-    ];
-    editor.create();
+//    var editor = new wangEditor('editor');
+//    editor.config.menus = [
+//        'bold',
+//        'underline',
+//        'italic',
+//        'strikethrough',
+//        'forecolor',
+//        'bgcolor',
+//        'quote',
+//        'fontsize',
+//        'img'
+//
+//    ];
+//    editor.create();
 </script>
 </body>
 </html>
