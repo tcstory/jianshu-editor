@@ -144,7 +144,22 @@ li {
     padding-top: .5rem;
     border-top: 1px solid #cccccc;
     border-right: 1px solid #cccccc;
+    position: relative;
 }
+#tc-writer .title-row .save-btn {
+    background-color: #DEDEDE;
+    width: 4rem;
+    height: 1.875rem;
+    position: absolute;
+    right: 0;
+    bottom: -1.95rem;
+    z-index: 50;
+    font-size: .8rem;
+    text-align: center;
+    line-height: 2rem;
+    cursor: pointer;
+}
+
 #tc-writer .main .title-input {
     width: 100%;
     height: 3.5rem;

@@ -73,7 +73,7 @@ var vm = new Vue({
 
     },
     watch: {
-        'curSelectedNote.content': function (newVal) {
+        'curSelectedNote.content': function (newVal, oldVal) {
             editor.$txt.html(newVal);
         }
     },
@@ -83,7 +83,6 @@ var vm = new Vue({
             this.curNote = note;
             this.deltaY = ev.clientY - noteDOMs[note.pos].dom.getBoundingClientRect().top;
             this.openDropdownMenu = false;
-            console.log('is me')
         },
         handleWriteNewNote: function () {
             var note = {
@@ -97,6 +96,9 @@ var vm = new Vue({
         },
         handleSettingIconClick: function () {
             this.openDropdownMenu = !this.openDropdownMenu;
+        },
+        handleSaveNote: function () {
+
         },
         handleDeleteNote: function (note) {
             this.notes.$remove(note);

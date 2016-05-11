@@ -38,6 +38,7 @@
     <article class="main">
         <div class="title-row">
             <input type="text" class="title-input" v-model="curSelectedNote.title">
+            <div class="save-btn" v-on:click.stop="handleSaveNote">保存</div>
         </div>
         <div class="text-area" id="editor"></div>
     </article>
