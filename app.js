@@ -219,18 +219,24 @@ var vm = new Vue({
 
 var noteHolderDIV = document.createElement('div');
 noteHolderDIV.classList.add('note-holder');
+
+
 var noteHolder = {
     timeId: -1,
     interval: 150,
     pos: -1,
     notesWrapper: document.querySelector('#tc-writer .directory'),
+    noteHolderDIV: noteHolderDIV,
+    isMouseDown: vm.isMousedown,
     insert: function (draggedNote, notes) {
         var _myself = this;
         if (_myself.timeId === -1) {
             _myself._addHolder(draggedNote, notes);
             _myself.timeId = setTimeout(function () {
                 _myself.timeId = -1;
-                _myself._addHolder(draggedNote, notes);
+                if (_myself.isMouseDown) {
+                    _myself._addHolder(draggedNote, notes);
+                }
             }, _myself.interval);
         }
     },
@@ -238,12 +244,12 @@ var noteHolder = {
         var len = notes.length;
         for (var i = 0; i < len; i++) {
             if (draggedNote.dom.offsetTop < notes[i].delimiter) {
-                this.notesWrapper.insertBefore(noteHolderDIV, notes[i].dom);
+                this.notesWrapper.insertBefore(this.noteHolderDIV, notes[i].dom);
                 break;
             }
         }
         if (i === len) {
-            this.notesWrapper.appendChild(noteHolderDIV);
+            this.notesWrapper.appendChild(this.noteHolderDIV);
         }
     }
 };
