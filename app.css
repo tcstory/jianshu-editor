@@ -63,6 +63,7 @@ li {
     position: absolute;
     border: .125rem solid #d1c091;
     background-color: red;
+    z-index: 10;
 }
 #tc-writer .file-icon {
     font-size: 2rem;
