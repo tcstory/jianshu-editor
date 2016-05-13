@@ -222,34 +222,33 @@ noteHolderDIV.classList.add('note-holder');
 
 
 var noteHolder = {
-    timeId: -1,
-    interval: 150,
-    pos: -1,
-    notesWrapper: document.querySelector('#tc-writer .directory'),
-    noteHolderDIV: noteHolderDIV,
-    isMouseDown: vm.isMousedown,
+    time_id: -1,
+    _interval: 150,
+    notes_wrapper: document.querySelector('#tc-writer .directory'),
+    note_holder_DIV: noteHolderDIV,
+    is_Mousedown: vm.isMousedown,
     insert: function (draggedNote, notes) {
         var _myself = this;
-        if (_myself.timeId === -1) {
+        if (_myself.time_id === -1) {
             _myself._addHolder(draggedNote, notes);
-            _myself.timeId = setTimeout(function () {
-                _myself.timeId = -1;
-                if (_myself.isMouseDown) {
+            _myself.time_id = setTimeout(function () {
+                _myself.time_id = -1;
+                if (_myself.is_Mousedown) {
                     _myself._addHolder(draggedNote, notes);
                 }
-            }, _myself.interval);
+            }, _myself._interval);
         }
     },
     _addHolder: function (draggedNote, notes) {
         var len = notes.length;
         for (var i = 0; i < len; i++) {
             if (draggedNote.dom.offsetTop < notes[i].delimiter) {
-                this.notesWrapper.insertBefore(this.noteHolderDIV, notes[i].dom);
+                this.notes_wrapper.insertBefore(this.note_holder_DIV, notes[i].dom);
                 break;
             }
         }
         if (i === len) {
-            this.notesWrapper.appendChild(this.noteHolderDIV);
+            this.notes_wrapper.appendChild(this.note_holder_DIV);
         }
     }
 };
